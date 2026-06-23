@@ -9,9 +9,9 @@ const enableWorkers = os.cpus().length !== 1;
 module.exports = {
     //// HOSTING CONFIGURATION ////
 
-    bindingAddress: '127.0.0.1',
+    bindingAddress: '0.0.0.0',
     port: 8080,
-    crossDomainPort: 8081,
+    crossDomainPort: null,
     publicDir: path.join(__dirname, '../public'), // set to null to disable
 
     // enable or disable multithreading
@@ -25,14 +25,14 @@ module.exports = {
     // this function's return object will determine how the client url rewriting will work.
     // set them differently from bindingAddress and port if rammerhead is being served
     // from a reverse proxy.
-    getServerInfo: () => ({ hostname: 'localhost', port: 8080, crossDomainPort: 8081, protocol: 'http:' }),
+    getServerInfo: (req) => ({ hostname: req.headers.host.split(':')[0], port: 443, protocol: 'https:' }),
     // example of non-hard-coding the hostname header
     // getServerInfo: (req) => {
     //     return { hostname: new URL('http://' + req.headers.host).hostname, port: 443, crossDomainPort: 8443, protocol: 'https: };
     // },
 
     // enforce a password for creating new sessions. set to null to disable
-    password: 'sharkie4life',
+    password: null,
 
     // disable or enable localStorage sync (turn off if clients send over huge localStorage data, resulting in huge memory usages)
     disableLocalStorageSync: false,
@@ -74,7 +74,7 @@ module.exports = {
         cacheCheckInterval: 1000 * 60 * 10, // 10 minutes
         deleteUnused: true,
         staleCleanupOptions: {
-            staleTimeout: 1000 * 60 * 60 * 24 * 3, // 3 days
+            staleTimeout: 1000 * 60 * 60 * 24 * 30, // ← last number determines no. of days session id lasts
             maxToLive: null,
             staleCheckInterval: 1000 * 60 * 60 * 6 // 6 hours
         },
